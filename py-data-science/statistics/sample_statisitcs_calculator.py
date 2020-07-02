@@ -2,6 +2,7 @@
 of Sample data '''
 import sys
 import numpy as np
+from scipy import stats
 
 class StatisticsCalculator:
     def __init__(self):
@@ -14,6 +15,12 @@ class StatisticsCalculator:
         return np.median(sampleDataset)
     
     def mode(sampleDataset):
-        return np.mode(sampleDataset)
+        return stats.mode(sampleDataset)[0]
+    
+    def maximumValue(sampleDataset):
+        return np.max(sampleDataset)
+    
+    def minimumValue(sampleDataset):
+        return np.min(sampleDataset)
 
 sys.path.append(".")
