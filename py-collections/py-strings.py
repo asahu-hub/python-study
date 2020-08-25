@@ -4,12 +4,17 @@ print('Str are immutable sequence of unicode characters')
 a = 'This is a string delimited with single quotes'
 b = "This is a string delimited with double quotes"
 
+uncompressed_name = 'message_in_a_bottle.txt'
+compressed_extension = '.zip'
+
 print(a)
 print(b)
 
 concatenatedString = " ".join(["This", "is", "a", "concatenated", "string"])
 print(concatenatedString)
 print(concatenatedString.split(" "))
+
+print(uncompressed_name+compressed_extension)
 
 print("""This is a multi-line
 string, recognized by three quotes""")
