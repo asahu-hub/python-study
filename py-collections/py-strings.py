@@ -35,3 +35,6 @@ print("Age of the current Prime Minister is {0}".format(45))
 
 # Formatting String using name
 print("Age of wife of current Prime Minister is {age}".format(age=40))
+
+# Check if Substring is present in String
+print("Is {0} present in '{1}': {2}".format('ith', a, 'ith' in a))
