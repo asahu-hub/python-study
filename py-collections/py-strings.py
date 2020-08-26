@@ -21,11 +21,12 @@ string, recognized by three quotes""")
 
 print('Raw String: ', r'C:\Documents\User\212400')
 
-# c="String accessed as Character Array"
-# counter = 0
-# while(counter < len(c)):
-#    print(c[counter])
-#    counter += 1
+print("Accessing String as Character Array:")
+c="Big Lions are dangerous"
+counter = 0
+while(counter < len(c)):
+    print('c[{0}]: '.format(counter),c[counter])
+    counter += 1
 
 # Partitioning String - Output: {Before, Separator, After}
 print("Paranthesis".partition("th"))
