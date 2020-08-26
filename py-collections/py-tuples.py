@@ -1,4 +1,4 @@
-print("Tuples are immutable collections of arbitary objects, indicated using round brackets")
+print("Tuples are immutable collections of arbitary objects, indicated using round brackets.\nImmutability means you cannot modify the length of the tuple nor change its values")
 
 # Empty Tuple
 t1 = ()
