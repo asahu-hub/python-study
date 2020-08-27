@@ -7,6 +7,7 @@ class Calculator:
         self._number1 = number1
         self._number2 = number2
 
+    """ Performs addition on two numbers """
     def add(self):
         return self._number1 + self._number2
 
