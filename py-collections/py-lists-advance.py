@@ -20,3 +20,12 @@ print(evenrandomlist)
 ## Zip two lists and iterate over both their items at the same time.
 for item1,item2 in zip(hl, nl):
     print(item1, '- double value -', item2)
+
+
+## Iterator in Lists
+listiterator=iter(randomlist)
+#print(listiterator, "\n")
+
+for item in listiterator:
+    print(item)
+
