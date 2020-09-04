@@ -7,7 +7,7 @@
 # 
 # To keep the implementation simple, you will apply your implementation to a simplified dataset, namely, letters ("items") in words ("receipts" or "baskets"). Having finished that code, you will then apply that code to some grocery store market basket data. If you write the code well, it will not be difficult to reuse building blocks from the letter case in the basket data case.
 
-# In[ ]:
+# In[1]:
 
 
 import sys
@@ -27,7 +27,7 @@ print(f"=== Python version ===\n{sys.version}")
 # 
 # Let's carry out this analysis on a "dummy" text fragment, which graphic designers refer to as the [_lorem ipsum_](https://en.wikipedia.org/wiki/Lorem_ipsum):
 
-# In[ ]:
+# In[2]:
 
 
 latin_text = """
@@ -92,7 +92,7 @@ print("First 100 characters:\n  {} ...".format(latin_text[:100]))
 # >
 # > _Hint_. Regard as a whitespace character anything "whitespace-like." That is, consider not just regular spaces, but also tabs, newlines, and perhaps others. To detect whitespaces easily, look for a "high-level" function that can help you do so rather than checking for literal space characters.
 
-# In[ ]:
+# In[3]:
 
 
 def normalize_string(s):
@@ -104,7 +104,7 @@ def normalize_string(s):
 print(latin_text[:100], "...\n=>", normalize_string(latin_text[:100]), "...")
 
 
-# In[ ]:
+# In[4]:
 
 
 # `normalize_string_test`: Test cell
@@ -128,7 +128,7 @@ print("\n(Passed!)")
 # 
 # (Only the first five entries of the output are shown.)
 
-# In[ ]:
+# In[5]:
 
 
 def get_normalized_words (s):
@@ -138,8 +138,8 @@ def get_normalized_words (s):
     normalized_words=[normalized_words for normalized_words in [word.partition(partition_character) for word in s.split(" ")]]
     nwords=[]
     for nword in normalized_words:
-       for word in nword:
-          if not word in unwanted_words:
+        for word in nword:
+            if not word in unwanted_words:
                 nwords.append(word)
     return nwords
 
@@ -147,12 +147,11 @@ def get_normalized_words (s):
 print("First five words:\n{}".format(get_normalized_words(latin_text)[:5]))
 
 
-# In[ ]:
+# In[6]:
 
 
 # `get_normalized_words_test`: Test cell
 norm_latin_words = get_normalized_words(norm_latin_text)
-print(len(norm_latin_words), '\n', norm_latin_words)
 
 assert len(norm_latin_words) == 250
 for i, w in [(20, 'illo'), (73, 'eius'), (144, 'deleniti'), (248, 'asperiores')]:
@@ -181,7 +180,7 @@ print ("\n(Passed.)")
 # 
 # > Because sets are unordered, different versions of Python may produce sets with whose element-ordering differs from what you see above. However, the sets themselves should be in this order in the output list, since that is the order in which the corresponding words were given.
 
-# In[ ]:
+# In[7]:
 
 
 def make_itemsets(words):
@@ -191,7 +190,7 @@ def make_itemsets(words):
 make_itemsets(['sed', 'ut', 'perspiciatis', 'unde', 'omnis'])
 
 
-# In[ ]:
+# In[8]:
 
 
 # `make_itemsets_test`: Test cell
@@ -249,13 +248,13 @@ print("\n(Passed!)")
 # 
 # When you create a default dictionary, you need to provide a "factory" function that the dictionary can use to create an initial value when the key does *not* exist. For instance, in the preceding example, when the key was not present the code creates a new key with the initial value of an integer zero (0). Indeed, this default value is the one you get when you call `int()` with no arguments:
 
-# In[ ]:
+# In[9]:
 
 
 print(int())
 
 
-# In[ ]:
+# In[10]:
 
 
 from collections import defaultdict
@@ -281,11 +280,12 @@ print(D2)
 # 
 # where you `pair_counts` is the table to update and `itemset` is the itemset from which you need to enumerate item-pairs. You may assume `pair_counts` is a default dictionary. Each key is a pair of items `(a, b)`, and each value is the count. You may assume all items in `itemset` are distinct, i.e., that you may treat it as you would any set-like collection. Since the function will modify `pair_counts`, it does not need to return an object.
 
-# In[ ]:
+# In[11]:
 
 
 from collections import defaultdict
 import itertools # Hint!
+from itertools import permutations
 
 def update_pair_counts (pair_counts, itemset):
     """
@@ -293,11 +293,11 @@ def update_pair_counts (pair_counts, itemset):
     all pairs of items in a given itemset.
     """
     assert type (pair_counts) is defaultdict
+    for item in permutations(itemset, 2):
+        pair_counts[item]+=1
 
-    
 
-
-# In[ ]:
+# In[12]:
 
 
 # `update_pair_counts_test`: Test cell
@@ -322,16 +322,18 @@ print ("\n(Passed!)")
 # 
 # As with the previous exercise, you may assume all items in the given itemset (`itemset`) are distinct, i.e., that you may treat it as you would any set-like collection. You may also assume the table (`item_counts`) is a default dictionary.
 
-# In[ ]:
+# In[13]:
 
 
 def update_item_counts(item_counts, itemset):
-    ###
-    ### YOUR CODE HERE
-    ###
+    assert type(item_counts) is defaultdict
+    assert len(itemset) != 0
+
+    for item in itemset:
+        item_counts[item]+=1
 
 
-# In[ ]:
+# In[14]:
 
 
 # `update_item_counts_test`: Test cell
@@ -357,18 +359,20 @@ print("\n(Passed!)")
 # 
 # You may assume that if $(a, b)$ is in the table of item-pair counts, then both $a$ and $b$ are in the table of individual item counts.
 
-# In[ ]:
+# In[15]:
 
 
 def filter_rules_by_conf (pair_counts, item_counts, threshold):
     rules = {} # (item_a, item_b) -> conf (item_a => item_b)
-    ###
-    ### YOUR CODE HERE
-    ###
+    for a,b in pair_counts:
+        if(a and a.strip() and b and b.strip()):
+            confidence_a_b = pair_counts[(a,b)]/item_counts[a]
+            if confidence_a_b >= threshold:
+                rules[(a,b)]=confidence_a_b
     return rules
 
 
-# In[ ]:
+# In[16]:
 
 
 # `filter_rules_by_conf_test`: Test cell
@@ -395,7 +399,7 @@ print("\n(Passed second test -- your code also seems to get the right confidence
 
 # **Aside: pretty printing the rules.** The output of rules above is a little messy; here's a little helper function that structures that output a little, which will be useful for both debugging and reporting purposes.
 
-# In[ ]:
+# In[17]:
 
 
 def gen_rule_str(a, b, val=None, val_fmt='{:.3f}', sep=" = "):
@@ -428,16 +432,21 @@ print_rules(rules)
 # 
 # The returned dictionary, `rules`, should be keyed by tuples $(a, b)$ corresponding to the rule $a \Rightarrow b$; each value should the the confidence $\mathrm{conf}(a \Rightarrow b)$ of the rule.
 
-# In[ ]:
+# In[18]:
+
 
 
 def find_assoc_rules(receipts, threshold):
-    ###
-    ### YOUR CODE HERE
-    ###
+    assert type(receipts) is list and len(receipts) != 0
+    pair_counts = defaultdict(int)
+    item_counts = defaultdict(int)
+    for receipt in receipts:
+        update_pair_counts(pair_counts, receipt)
+        update_item_counts(item_counts, receipt)
+    return filter_rules_by_conf(pair_counts, item_counts, threshold)
 
 
-# In[ ]:
+# In[19]:
 
 
 # `find_assoc_rules_test`: Test cell
@@ -460,19 +469,18 @@ print("\n(Passed!)")
 
 # **Exercise 8** (`latin_rules_test`: 2 points). For the Latin string, `latin_text`, use your `find_assoc_rules()` function to compute the rules whose confidence is at least 0.75. Store your result in a variable named `latin_rules`.
 
-# In[ ]:
+# In[20]:
 
 
 # Generate `latin_rules`:
-###
-### YOUR CODE HERE
-###
+norm_latin_itemsets = make_itemsets(get_normalized_words(normalize_string(latin_text)))
+latin_rules=find_assoc_rules(norm_latin_itemsets, 0.75)
 
 # Inspect your result:
 print_rules(latin_rules)
 
 
-# In[ ]:
+# In[21]:
 
 
 # `latin_rules_test`: Test cell
@@ -487,7 +495,7 @@ print("\n(Passed!)")
 # 
 # For the English text, here is an English translation of the _lorem ipsum_ text, encoded as the variable `english_text` in the next code cell:
 
-# In[ ]:
+# In[22]:
 
 
 english_text = """
@@ -538,18 +546,16 @@ avoid worse pains.
 
 # **Exercise 9** (`intersect_keys_test`: 2 points). Write a function that, given two dictionaries, finds the intersection of their keys.
 
-# In[ ]:
+# In[23]:
 
 
 def intersect_keys(d1, d2):
     assert type(d1) is dict or type(d1) is defaultdict
     assert type(d2) is dict or type(d2) is defaultdict
-    ###
-    ### YOUR CODE HERE
-    ###
+    return list(set(d1.keys()) & set(d2.keys()))
 
 
-# In[ ]:
+# In[24]:
 
 
 # `intersect_keys_test`: Test cell
@@ -574,18 +580,18 @@ print("\n(Passed!)")
 # 
 # Write some code that finds all high-confidence rules appearing in _both_ the Latin text _and_ the English text. Store your result in a list named `common_high_conf_rules` whose elements are $(a, b)$ pairs corresponding to the rules $a \Rightarrow b$.
 
-# In[ ]:
+# In[25]:
 
 
-###
-### YOUR CODE HERE
-###
+norm_english_itemsets = make_itemsets(get_normalized_words(normalize_string(english_text)))
+english_rules=find_assoc_rules(norm_english_itemsets, 0.75)
+common_high_conf_rules=intersect_keys(latin_rules, english_rules)
 
 print("High-confidence rules common to _lorem ipsum_ in Latin and English:")
 print_rules(common_high_conf_rules)
 
 
-# In[ ]:
+# In[26]:
 
 
 # `common_high_conf_rules_test`: Test cell
@@ -601,7 +607,7 @@ print("\n(Passed!)")
 # 
 # First, here's a code snippet to load the data, which is a text file. If you are running in the Vocareum environment, we've already placed a copy of the data there; if you are running outside, this code will try to download a copy from the CSE 6040 website.
 
-# In[ ]:
+# In[27]:
 
 
 def on_vocareum():
@@ -657,7 +663,7 @@ print("\n(All data appears to be ready.)")
 # 
 # Your solution can use the `groceries_file` string variable defined above as its starting point. And since it's in the same notebook, you may, of course, reuse any of the code you've written above as needed. Lastly, if you feel you need additional code cells, you can create them _after_ the code cell marked for your solution but _before_ the code marked, `### TEST CODE ###`.
 
-# In[ ]:
+# In[28]:
 
 
 # Confidence threshold
@@ -667,15 +673,53 @@ THRESHOLD = 0.5
 MIN_COUNT = 10
 
 
-# In[ ]:
+# In[29]:
 
 
-###
-### YOUR CODE HERE
-###
+def filter_rules_by_conf_mincount (pair_counts, item_counts, threshold):
+    rules = {} # (item_a, item_b) -> conf (item_a => item_b)
+    for a,b in pair_counts:
+        if a in item_counts:
+            pair_count_a_b=pair_counts[(a,b)]
+            item_count_a=item_counts[a]
+            confidence_a_b = pair_count_a_b/item_count_a
+            if confidence_a_b >= threshold:
+                rules[(a,b)]=confidence_a_b
+    return rules
 
 
-# In[ ]:
+# In[30]:
+
+
+def find_assoc_rules_mincount(receipts, threshold, mincount):
+    print("Receipts Count: ", len(receipts))
+    pair_counts = defaultdict(int)
+    item_counts = defaultdict(int)
+    for receipt in receipts:
+        #print("\nCurrent Receipt: ",receipt)
+        update_pair_counts(pair_counts, receipt)
+        update_item_counts(item_counts, receipt)
+    #print("Pair Count:{}\n Item Count: {}".format(len(pair_counts), len(item_counts)))
+    item_counts = {k:v for k,v in item_counts.items() if v>= mincount}
+    #print("Pair Count:{}\n Item Count: {}".format(len(pair_counts), len(item_counts)))
+    return filter_rules_by_conf_mincount(pair_counts, item_counts, threshold)
+
+
+# In[31]:
+
+
+allreceipts = [receipt.split(',') for receipt in groceries_file.splitlines()]
+basket_rules = find_assoc_rules_mincount(allreceipts, THRESHOLD, MIN_COUNT)
+
+
+# In[32]:
+
+
+#basket_rules = filter_rules_by_conf_mincount(g_pair_counts, g_item_counts, THRESHOLD, MIN_COUNT)
+print("\nBasket rules: ", len(basket_rules))
+
+
+# In[33]:
 
 
 ### `basket_rules_test`: TEST CODE ###
