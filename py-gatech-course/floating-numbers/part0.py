@@ -438,10 +438,17 @@ def eval_fp(sign, significand, exponent, base=2):
     assert sign in ['+', '-'], "Sign bit must be '+' or '-', not '{}'.".format(sign)
     assert is_valid_strfrac(significand, base), "Invalid significand for base-{}: '{}'".format(base, significand)
     assert type(exponent) is int
-
-    ###
-    ### YOUR CODE HERE
-    ###
+    
+    signi_mul=base**exponent
+    #print('signi_mul: ', signi_mul)
+    significand = eval_strfrac(significand, base)
+    #print('significand: ', significand)
+    signi_val=significand*signi_mul
+    #print('signi_val: ', signi_val)
+    sign_val=0 if sign=='-' else 1
+    if sign_val==0:
+        signi_val=sign_val-signi_val
+    return float(signi_val)
 
 
 # In[ ]:
@@ -521,9 +528,15 @@ def add_fp_bin(u, v, signif_bits):
     assert u_signif[:2] == '1.' and len(u_signif) == (signif_bits+1)
     assert v_signif[:2] == '1.' and len(v_signif) == (signif_bits+1)
     
-    ###
-    ### YOUR CODE HERE
-    ###
+    u_fp=eval_fp(u_sign, u_signif, u_exp)
+    v_fp=eval_fp(v_sign, v_signif, v_exp)
+    print("U-Float Value:{}\nV-Float Value:{}".format(u_fp, v_fp))
+    sum=u_fp+v_fp
+    print("Sum of Float values: ", sum)
+    sum_tuple=fp_bin(sum)
+    print("Bin-Sum: ", sum_tuple)
+    return (sum_tuple[0], sum_tuple[1][0:signif_bits+1], sum_tuple[2])
+    
 
 
 # In[ ]:
@@ -566,3 +579,5 @@ print("\n(Passed!)")
 
 
 # **Done!** You've reached the end of `part0`. Be sure to save and submit your work. Once you are satisfied, move on to `part1`.
+
+# %%
