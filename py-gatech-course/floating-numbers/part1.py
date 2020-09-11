@@ -238,9 +238,12 @@ t = [0.0] * len(N)
 # Your code should do the experiment described above for
 # each problem size N[i], and store the computed sum in t[i].
 
-###
-### YOUR CODE HERE
-###
+for index, value in enumerate(N):
+    print("Current Index:{}\t Value:{}".format(index, value))
+    x = [0.1]*value
+    t[index]=alg_sum(x)
+
+
 
 print(t)
 
@@ -359,9 +362,8 @@ def alg_dot (x, y):
 
 def alg_sum_accurate(x):
     assert type(x) is list
-    ###
-    ### YOUR CODE HERE
-    ###
+    y=sorted(x)
+    return alg_sum(y)
 
 
 # In[ ]:
@@ -406,3 +408,5 @@ print("\n(Passed!)")
 
 
 # **Done!** You have reached the end of Part 1. There are no additional parts, so if you are satisfied, be sure to submit both parts, declare victory, and move on!
+
+# %%
