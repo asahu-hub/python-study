@@ -29,3 +29,7 @@ listiterator=iter(randomlist)
 for item in listiterator:
     print(item)
 
+floatsrandomlist=[1.2345665, 2.3435656, 3.564786987, 22.3343434343, 1.92345]
+print("Total Sum:", sum(floatsrandomlist))
+
+
