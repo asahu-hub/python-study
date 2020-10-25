@@ -153,6 +153,8 @@ print("==> I_u = diag (u):\n", I_u)
 
 assert np.all(I_u == I)
 
+print(I_u.dtype, I.dtype)
+
 
 # **Answer.** Give this some thought before you read the answer that follows!
 # 
@@ -202,13 +204,12 @@ Z= np.array([[0,1,2,3,4,5],
              [30,31,32,33,34,35],
              [40,41,42,43,44,45],
              [50,51,52,53,54,55]])
-
+#print(Z.shape, Z.ndim)
 # Construct `Z_green`, `Z_red`, `Z_orange`, and `Z_cyan`:
-###
-### YOUR CODE HERE
-###
-
-
+Z_orange = Z[0, 3:5]
+Z_red=Z[0:6,2]
+Z_cyan=Z[4:6, 4:6]
+Z_green=Z[2::2, 0::2]
 # In[ ]:
 
 
@@ -318,12 +319,7 @@ print(x[inds])
 # **Exercise 3** (1 point). Given the input array, `x[:]`, above, create an array, `mask_mult_3[:]` such that `mask_mult_3[i]` is true only if `x[i]` is a positive multiple of 3.
 
 # In[ ]:
-
-
-###
-### YOUR CODE HERE
-###
-
+mask_mult_3 = (x>0) & (x%3==0)
 
 # In[ ]:
 
@@ -365,9 +361,8 @@ def sieve(n):
     is_prime[2:] = True # All other values might be prime
 
     # Implement the sieving loop
-    ###
-    ### YOUR CODE HERE
-    ###
+    for i in range(2,int(sqrt(n))):
+          is_prime[2*i::i] = False
     
     return is_prime
 
@@ -387,3 +382,5 @@ print("\n(Passed.)")
 
 
 # **Fin!** If you've reached this point and everything executed without error, you can submit this part and move on to the next one.
+
+# %%

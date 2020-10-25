@@ -42,9 +42,7 @@ def linearize_colmajor(i, j, m, n): # calculate `u`
     Returns the linear index for the `(i, j)` entry of
     an `m`-by-`n` matrix stored in column-major order.
     """
-    ###
-    ### YOUR CODE HERE
-    ###
+    return i + (j*m)
 
 
 # In[ ]:
@@ -55,9 +53,7 @@ def linearize_rowmajor(i, j, m, n): # calculate `v`
     Returns the linear index for the `(i, j)` entry of
     an `m`-by-`n` matrix stored in row-major order.
     """
-    ###
-    ### YOUR CODE HERE
-    ###
+    return i*n + j
 
 
 # In[ ]:
@@ -116,9 +112,9 @@ def scale_colwise(A):
     assert type(A) is np.ndarray
     
     n_cols = A.shape[1] # number of columns
-    ###
-    ### YOUR CODE HERE
-    ###
+    for j in range(n_cols):
+        A[:, j] *= j
+    
     return A
 
 
@@ -192,9 +188,7 @@ def matvec_py(m, n, A, x):
     assert len(A) >= (m*n)
 
     y = [0.] * m
-    ###
-    ### YOUR CODE HERE
-    ###
+    y = list(A_np.dot(x_np))
     return y
 
 
@@ -253,3 +247,5 @@ get_ipython().magic('timeit matvec_py (n, n, A_py, x_py)')
 
 
 # **Fin!** If you've reached this point and everything executed without error, you can submit this part and move on to the next one.
+
+# %%

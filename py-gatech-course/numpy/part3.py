@@ -503,6 +503,7 @@ get_ipython().magic('timeit spmv_coo(coo_rows, coo_cols, coo_vals, x)')
 
 def coo2csr(coo_rows, coo_cols, coo_vals):
     from operator import itemgetter
+    from itertools import accumulate
     C = sorted(zip(coo_rows, coo_cols, coo_vals), key=itemgetter(0))
     nnz = len(C)
     assert nnz >= 1
@@ -513,10 +514,14 @@ def coo2csr(coo_rows, coo_cols, coo_vals):
     csr_vals = [a_ij for _, _, a_ij in C]
 
     # Your task: Compute `csr_ptrs`
-    ###
-    ### YOUR CODE HERE
-    ###
+    i_cur = -1 # a known, invalid row index
+    for k in range(nnz):
+        if C_rows[k] != i_cur:
+            i_cur = C_rows[k]
+            csr_ptrs[i_cur] = k
     
+    csr_ptrs = list(accumulate(csr_ptrs, max))
+    csr_ptrs[-1] = nnz
     return csr_ptrs, csr_inds, csr_vals
 
 
