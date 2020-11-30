@@ -37,7 +37,27 @@ onesArray = np.ones((3, 4))
 print("\nOnes Array: \n", onesArray)
 
 # Creating a diagonal matrix with 4 rows and 5 columns.
-x = np.array([np.arange(1, 4, 1), np.arange(2, 5, 1), np.arange(3, 6, 1)])
+x = np.array([np.arange(1, 4, 1), np.arange(2, 5, 1), np.arange(3, 6, 1), np.arange(7, 10, 1)])
 print("\nOriginal Array: \n", x)
 diagArray = np.diag(x)
 print("\nDiagonal Array: \n", diagArray)
+
+# In order to change the dimension (shape) of an array, we use reshape
+originalArray = x.copy()
+print("\nArray before reshaping:\n", originalArray, "\nNumber of elements in the original array: ", originalArray.size)
+# Divide the original array (1 element with 4 rows and 3 columns) into an array (2 elements with 1 row and 6 columns)
+reshapedArray = originalArray.reshape((2, 1, 6))
+print("\nArray after reshaping:\n", reshapedArray)
+
+#Basic Arithmetic Operations
+a = np.arange(1, 4, 1)
+print("\na: ", a)
+b = np.arange(5, 8, 1)
+print("\nb: ", b)
+print("\na+b: ", a+b)
+print("\na*b: ", a*b)
+print("\nb-a: ", b-a)
+a+=1
+print("\na+=1: ", a)
+a*=2
+print("\na*=2: ", a)
