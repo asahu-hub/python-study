@@ -16,6 +16,7 @@ print("All Dict keys: ", empD.keys())
 print("All Dict values: ", empD.values())
 print("All Dict Items: ", empD.items())
 
+print("length: ", len(empD))
 # Check if Key is present in the Dictionary
 print('Akshay' in empD)
 print('Virat' in empD)
