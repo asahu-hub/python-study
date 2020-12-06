@@ -60,6 +60,7 @@ A = LL.T (or) UU.T
 '''
 matrix_b = np.array([[2,1,1],[1,2,1],[1,1,2]])
 print("\nMatrix B:\n", matrix_b)
+
 L = cholesky(matrix_b)
 print("\nCholesky Decomposed Lower Triangular Matrix:\n{0}".format(L))
 
