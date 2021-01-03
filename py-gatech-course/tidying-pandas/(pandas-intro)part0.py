@@ -409,7 +409,7 @@ cafes2
 
 
 cafes3 = cafes2.copy()
-cafes3
+print(cafes3)
 
 
 # In[ ]:
@@ -418,13 +418,15 @@ cafes3
 is_fancy = cafes3['zip'].isin({30306, 30308})
 # Alternative:
 #is_fancy = cafes3['zip'].apply(lambda z: z in {30306, 30308})
+
+print("is_fancy")
 is_fancy
 
 
 # In[ ]:
 
 
-cafes3[is_fancy]
+print(cafes3[is_fancy])
 
 
 # In[ ]:

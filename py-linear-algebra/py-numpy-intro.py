@@ -14,7 +14,7 @@ b = [51,26,-7,38]
 
 onedArray = np.array(a)
 twodArray = np.array([a, b])
-print("1-D Array: \n", onedArray, "\n\n2-D Array: \n", twodArray)
+print("1-D Array: \n", onedArray.shape, "\n\n2-D Array: \n", twodArray)
 print("\n2-D Array Dimension: ", twodArray.ndim, "\n2-D Array Shape (MxN): ", twodArray.shape, "\n2-D Number of Elements: ", 
 twodArray.size, "\n2-D Data Type: ", twodArray.dtype) 
 
