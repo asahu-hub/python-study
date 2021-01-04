@@ -30,5 +30,5 @@ Usage of Statistics in Machine Learning:
 Following are places in Machine Learning where statistical methods are used.
 1. Problem Framing
 2. Data Understanding, Cleaning, Selection, Preparation
-3. Model Evaluation, Configuration, Selection, PResentation and Predictions.
+3. Model Evaluation, Configuration, Selection, Presentation and Predictions.
 
