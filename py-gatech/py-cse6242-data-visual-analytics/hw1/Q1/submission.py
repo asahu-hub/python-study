@@ -172,7 +172,6 @@ class  TMDBAPIUtils:
     def __init__(self, api_key:str):
         self.api_key=api_key
 
-
     def get_movie_cast(self, movie_id:str, limit:int=None, exclude_ids:list=None) -> list:
         """
         Get the movie cast for a given movie id, with optional parameters to exclude an cast member
@@ -336,9 +335,13 @@ def return_argo_lite_snapshot()->str:
 
 if __name__ == "__main__":
 
+    api_key = "a49a547644e4dc785b36a69c9acb0023"
+    api_request_url = "https://api.themoviedb.org/3/movie/550?api_key=a49a547644e4dc785b36a69c9acb0023"
+    api_read_access_token_v4_auth = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhNDlhNTQ3NjQ0ZTRkYzc4NWIzNmE2OWM5YWNiMDAyMyIsInN1YiI6IjYwMGZkNGI5OTJlNTViMDAzZDY5Nzc1NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Ousyyj4lBScSU8yU2JonRmbsyD-8dVVo37sscZa7ceU"
+    
     graph = Graph()
     graph.add_node(id='2975', name='Laurence Fishburne')
-    tmdb_api_utils = TMDBAPIUtils(api_key='<your API key>')
+    tmdb_api_utils = TMDBAPIUtils(api_key=api_key)
 
     # call functions or place code here to build graph (graph building code not graded)
     # Suggestion: code should contain steps outlined above in BUILD CO-ACTOR NETWORK
