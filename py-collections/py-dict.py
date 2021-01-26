@@ -20,3 +20,6 @@ print("length: ", len(empD))
 # Check if Key is present in the Dictionary
 print('Akshay' in empD)
 print('Virat' in empD)
+
+new_dict = {firstname:lastname for firstname, lastname in empD.items()}
+print(new_dict)

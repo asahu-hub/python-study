@@ -61,7 +61,9 @@ class Graph:
         add a tuple (id, name) representing a node to self.nodes if it does not already exist
         The graph should not contain any duplicate nodes
         """
-        return NotImplemented
+        if id not in dict(self.nodes):
+            self.nodes.append((id, name))
+        # return NotImplemented
 
 
     def add_edge(self, source: str, target: str)->None:
@@ -71,21 +73,26 @@ class Graph:
         Where 'source' is the id of the source node and 'target' is the id of the target node
         e.g., for two nodes with ids 'a' and 'b' respectively, add the tuple ('a', 'b') to self.edges
         """
-        return NotImplemented
+        new_edge = (source, target)
+        if new_edge not in dict(self.edges).items():
+            self.edges.append(new_edge)
+        # return NotImplemented
 
 
     def total_nodes(self)->int:
         """
         Returns an integer value for the total number of nodes in the graph
         """
-        return NotImplemented
+        return len(self.nodes)
+        #return NotImplemented
 
 
     def total_edges(self)->int:
         """
         Returns an integer value for the total number of edges in the graph
         """
-        return NotImplemented
+        return len(self.edges)
+        # return NotImplemented
 
 
     def max_degree_nodes(self)->dict:
@@ -96,7 +103,14 @@ class Graph:
         e.g. {'a': 8}
         or {'a': 22, 'b': 22}
         """
-        return NotImplemented
+        all_nodes = self.nodes
+        counters = {}
+        for id, name in all_nodes:
+            counters[id] = counters.get(id, 0) + 1
+
+        max_occurence_count. = max(counters.values())
+        return {key:max_occurence_count for key in counters.keys() if counters[key] == max_occurence_count}
+        #return NotImplemented
 
 
     def print_nodes(self):
