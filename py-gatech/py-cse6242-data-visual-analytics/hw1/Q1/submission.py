@@ -200,10 +200,7 @@ class  TMDBAPIUtils:
             selected_cast_members = [cast for cast in selected_cast_members if cast["order"] < limit]
         if exclude_ids != None and len(exclude_ids) > 0:
             selected_cast_members = [cast for cast in selected_cast_members if cast["id"] not in exclude_ids]
-            
-        print(selected_cast_members)
-        
-
+        return selected_cast_members
 
     def get_movie_credits_for_person(self, person_id:str, vote_avg_threshold:float=None)->list:
         """
@@ -225,10 +222,14 @@ class  TMDBAPIUtils:
         print("URL: ", appendURL)
         connection.request("GET", appendURL)
         response = connection.getresponse()
-        responseJson = response.read().decode()
-        print("HTTP Response Body: ", responseJson)
-        print("Status: {} and reason: {}".format(response.status, response.reason))
+        person_credits_data = json.loads(response.read().decode())
+        print("Person Credit API Response Status: {} - {}".format(response.status, response.reason))
         connection.close()
+        
+        selected_cast_members = [cast for cast in person_credits_data["cast"]]
+        if vote_avg_threshold != None:
+            selected_cast_members = [cast for cast in selected_cast_members if cast["vote_average"] >= vote_avg_threshold]
+        print(selected_cast_members)
 
 
 
@@ -361,8 +362,8 @@ if __name__ == "__main__":
 
     # call functions or place code here to build graph (graph building code not graded)
     # Suggestion: code should contain steps outlined above in BUILD CO-ACTOR NETWORK
-    tmdb_api_utils.get_movie_cast("3", 2, [4826])
-    #tmdb_api_utils.get_movie_credits_for_person("2975")
+    tmdb_api_utils.get_movie_cast("3", 3, [4826])
+    tmdb_api_utils.get_movie_credits_for_person("2975", 9.0)
 
 
     #graph.write_edges_file()
