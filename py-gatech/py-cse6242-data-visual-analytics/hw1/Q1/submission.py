@@ -54,8 +54,7 @@ class Graph:
             edges_CSV = csv.reader(open(with_edges_file))
             edges_CSV = list(edges_CSV)[1:]
             self.edges = [(e[0],e[1]) for e in edges_CSV]
-
-
+            
     def add_node(self, id: str, name: str)->None:
         """
         add a tuple (id, name) representing a node to self.nodes if it does not already exist
@@ -63,8 +62,7 @@ class Graph:
         """
         if id not in dict(self.nodes):
             self.nodes.append((id, name))
-        # return NotImplemented
-
+    
 
     def add_edge(self, source: str, target: str)->None:
         """
@@ -76,24 +74,18 @@ class Graph:
         new_edge = (source, target)
         if new_edge not in dict(self.edges).items():
             self.edges.append(new_edge)
-        # return NotImplemented
-
-
+        
     def total_nodes(self)->int:
         """
         Returns an integer value for the total number of nodes in the graph
         """
         return len(self.nodes)
-        #return NotImplemented
-
-
+    
     def total_edges(self)->int:
         """
         Returns an integer value for the total number of edges in the graph
         """
         return len(self.edges)
-        # return NotImplemented
-
 
     def max_degree_nodes(self)->dict:
         """
@@ -108,9 +100,8 @@ class Graph:
         for id, name in all_nodes:
             counters[id] = counters.get(id, 0) + 1
 
-        max_occurence_count. = max(counters.values())
+        max_occurence_count = max(counters.values())
         return {key:max_occurence_count for key in counters.keys() if counters[key] == max_occurence_count}
-        #return NotImplemented
 
 
     def print_nodes(self):
@@ -195,7 +186,15 @@ class  TMDBAPIUtils:
                 Note that this is an example of the structure of the list and some of the fields returned by the API.
                 The result of the API call will include many more fields for each cast member.
         """
-        return NotImplemented
+        connection = http.client.HTTPSConnection("api.themoviedb.org")
+        appendURL = movie_id + "/movie/" + movie_id + "/credits?api_key=" + api_key + "&language=en-US"
+        connection.request("GET", appendURL)
+        response = connection.getresponse()
+        responseJson = response.read().decode()
+        print("HTTP Response Body: ", responseJson)
+        print("Status: {} and reason: {}".format(response.status, response.reason))
+        connection.close()        
+        
 
 
     def get_movie_credits_for_person(self, person_id:str, vote_avg_threshold:float=None)->list:
@@ -213,7 +212,15 @@ class  TMDBAPIUtils:
                 'title': 'Long, Stock and Two Smoking Barrels' # the title (not original title) of the credit
                 'vote_avg': 5.0 # the float value of the vote average value for the credit}, ... ]
         """
-        return NotImplemented
+        connection = http.client.HTTPSConnection("api.themoviedb.org")
+        appendURL = person_id + "/person/" + person_id + "/movie_credits?api_key=" + api_key + "&language=en-US"
+        connection.request("GET", appendURL)
+        response = connection.getresponse()
+        responseJson = response.read().decode()
+        print("HTTP Response Body: ", responseJson)
+        print("Status: {} and reason: {}".format(response.status, response.reason))
+        connection.close()
+
 
 
 #############################################################################################################################
@@ -319,7 +326,7 @@ def return_name()->str:
     e.g., gburdell3
     Do not return your 9 digit GTId
     """
-    return NotImplemented
+    return "asahu33@gatech.edu"
 
 
 def return_argo_lite_snapshot()->str:
@@ -345,9 +352,12 @@ if __name__ == "__main__":
 
     # call functions or place code here to build graph (graph building code not graded)
     # Suggestion: code should contain steps outlined above in BUILD CO-ACTOR NETWORK
+    tmdb_api_utils.get_movie_cast("3")
+    tmdb_api_utils.get_movie_credits_for_person("3")
 
-    graph.write_edges_file()
-    graph.write_nodes_file()
+
+    #graph.write_edges_file()
+    #graph.write_nodes_file()
 
     # If you have already built & written out your graph, you could read in your nodes & edges files
     # to perform testing on your graph.
