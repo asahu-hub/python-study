@@ -187,13 +187,21 @@ class  TMDBAPIUtils:
                 The result of the API call will include many more fields for each cast member.
         """
         connection = http.client.HTTPSConnection("api.themoviedb.org")
-        appendURL = movie_id + "/movie/" + movie_id + "/credits?api_key=" + api_key + "&language=en-US"
+        appendURL = "/3/movie/" + movie_id + "/credits?api_key=" + api_key + "&language=en-US"
         connection.request("GET", appendURL)
+        print("URL: ", appendURL)
         response = connection.getresponse()
-        responseJson = response.read().decode()
-        print("HTTP Response Body: ", responseJson)
-        print("Status: {} and reason: {}".format(response.status, response.reason))
-        connection.close()        
+        movie_credits_data = json.loads(response.read().decode())
+        print("Movie Credits Response Status is: {} - {}".format(response.status, response.reason))
+        connection.close()
+        
+        selected_cast_members = [cast for cast in movie_credits_data["cast"]]
+        if limit != None:
+            selected_cast_members = [cast for cast in selected_cast_members if cast["order"] < limit]
+        if exclude_ids != None and len(exclude_ids) > 0:
+            selected_cast_members = [cast for cast in selected_cast_members if cast["id"] not in exclude_ids]
+            
+        print(selected_cast_members)
         
 
 
@@ -213,7 +221,8 @@ class  TMDBAPIUtils:
                 'vote_avg': 5.0 # the float value of the vote average value for the credit}, ... ]
         """
         connection = http.client.HTTPSConnection("api.themoviedb.org")
-        appendURL = person_id + "/person/" + person_id + "/movie_credits?api_key=" + api_key + "&language=en-US"
+        appendURL = "/3/person/" + person_id + "/movie_credits?api_key=" + api_key + "&language=en-US"
+        print("URL: ", appendURL)
         connection.request("GET", appendURL)
         response = connection.getresponse()
         responseJson = response.read().decode()
@@ -352,8 +361,8 @@ if __name__ == "__main__":
 
     # call functions or place code here to build graph (graph building code not graded)
     # Suggestion: code should contain steps outlined above in BUILD CO-ACTOR NETWORK
-    tmdb_api_utils.get_movie_cast("3")
-    tmdb_api_utils.get_movie_credits_for_person("3")
+    tmdb_api_utils.get_movie_cast("3", 2, [4826])
+    #tmdb_api_utils.get_movie_credits_for_person("2975")
 
 
     #graph.write_edges_file()
