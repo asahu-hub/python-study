@@ -199,7 +199,7 @@ class  TMDBAPIUtils:
             selected_cast_members = [cast for cast in selected_cast_members if cast["order"] < limit]
         if exclude_ids != None and len(exclude_ids) > 0:
             selected_cast_members = [cast for cast in selected_cast_members if cast["id"] not in exclude_ids]
-        return [{"id": cast["id"], "character": cast["character"], "credit_id": cast["credit_id"]} for cast in selected_cast_members]
+        return [{"id": cast["id"], "character": cast["character"].replace(",", ""), "credit_id": cast["credit_id"]} for cast in selected_cast_members]
         
     def get_movie_credits_for_person(self, person_id:str, vote_avg_threshold:float=None)->list:
         """
@@ -356,6 +356,7 @@ if __name__ == "__main__":
     init_node_id="2975"
     init_node_actor_name="Laurence Fishburne"
     number_of_coactors = 3
+    all_graph_nodes={}
     
     graph = Graph()
     graph.add_node(id=init_node_id, name=init_node_actor_name)
@@ -371,11 +372,15 @@ if __name__ == "__main__":
         coactors_data=tmdb_api_utils.get_movie_cast(str(current_credits_data["id"]), number_of_coactors)
         for actor in coactors_data:
             actor_id=actor["id"]
-            graph.add_node(actor_id, actor["character"])
+            actor_movie_character_name=actor["character"]
+            graph.add_node(actor_id, actor_movie_character_name)
             graph.add_edge(init_node_id, actor_id)
+            new_node=(actor_id, actor_movie_character_name)
+            all_graph_nodes[actor_id]=new_node
     
-    
-    
+    #for node in all_graph_nodes:
+        
+        
     #graph.write_edges_file()
     #graph.write_nodes_file()
 
