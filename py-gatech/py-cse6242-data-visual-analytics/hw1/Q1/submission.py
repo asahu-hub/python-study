@@ -189,10 +189,9 @@ class  TMDBAPIUtils:
         connection = http.client.HTTPSConnection("api.themoviedb.org")
         appendURL = "/3/movie/" + movie_id + "/credits?api_key=" + api_key + "&language=en-US"
         connection.request("GET", appendURL)
-        print("URL: ", appendURL)
         response = connection.getresponse()
         movie_credits_data = json.loads(response.read().decode())
-        print("Movie Credits Response Status is: {} - {}".format(response.status, response.reason))
+        #print("Movie Credits Response Status is: {} - {}".format(response.status, response.reason))
         connection.close()
         
         selected_cast_members = [cast for cast in movie_credits_data["cast"]]
@@ -200,8 +199,8 @@ class  TMDBAPIUtils:
             selected_cast_members = [cast for cast in selected_cast_members if cast["order"] < limit]
         if exclude_ids != None and len(exclude_ids) > 0:
             selected_cast_members = [cast for cast in selected_cast_members if cast["id"] not in exclude_ids]
-        return selected_cast_members
-
+        return [{"id": cast["id"], "character": cast["character"], "credit_id": cast["credit_id"]} for cast in selected_cast_members]
+        
     def get_movie_credits_for_person(self, person_id:str, vote_avg_threshold:float=None)->list:
         """
         Using the TMDb API, get the movie credits for a person serving in a cast role
@@ -219,20 +218,17 @@ class  TMDBAPIUtils:
         """
         connection = http.client.HTTPSConnection("api.themoviedb.org")
         appendURL = "/3/person/" + person_id + "/movie_credits?api_key=" + api_key + "&language=en-US"
-        print("URL: ", appendURL)
         connection.request("GET", appendURL)
         response = connection.getresponse()
         person_credits_data = json.loads(response.read().decode())
-        print("Person Credit API Response Status: {} - {}".format(response.status, response.reason))
+        #print("Person Credit API Response Status: {} - {}".format(response.status, response.reason))
         connection.close()
         
-        selected_cast_members = [cast for cast in person_credits_data["cast"]]
+        person_credits_data = [cast for cast in person_credits_data["cast"]]
         if vote_avg_threshold != None:
-            selected_cast_members = [cast for cast in selected_cast_members if cast["vote_average"] >= vote_avg_threshold]
-        print(selected_cast_members)
-
-
-
+            person_credits_data = [cast for cast in person_credits_data if cast["vote_average"] >= vote_avg_threshold]
+        return [{"id": cast["id"], "title": cast["title"], "vote_avg": cast["vote_average"]} for cast in person_credits_data]
+    
 #############################################################################################################################
 #
 # BUILDING YOUR GRAPH
@@ -355,17 +351,31 @@ if __name__ == "__main__":
     api_key = "a49a547644e4dc785b36a69c9acb0023"
     api_request_url = "https://api.themoviedb.org/3/movie/550?api_key=a49a547644e4dc785b36a69c9acb0023"
     api_read_access_token_v4_auth = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhNDlhNTQ3NjQ0ZTRkYzc4NWIzNmE2OWM5YWNiMDAyMyIsInN1YiI6IjYwMGZkNGI5OTJlNTViMDAzZDY5Nzc1NyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Ousyyj4lBScSU8yU2JonRmbsyD-8dVVo37sscZa7ceU"
+
+    highly_rated_movies_average_threshold=8.0
+    init_node_id="2975"
+    init_node_actor_name="Laurence Fishburne"
+    number_of_coactors = 3
     
     graph = Graph()
-    graph.add_node(id='2975', name='Laurence Fishburne')
+    graph.add_node(id=init_node_id, name=init_node_actor_name)
     tmdb_api_utils = TMDBAPIUtils(api_key=api_key)
 
     # call functions or place code here to build graph (graph building code not graded)
     # Suggestion: code should contain steps outlined above in BUILD CO-ACTOR NETWORK
-    tmdb_api_utils.get_movie_cast("3", 3, [4826])
-    tmdb_api_utils.get_movie_credits_for_person("2975", 9.0)
-
-
+    
+    ### Step-1: Building Base Graph by initializing connections of Laurence Fishburne
+    init_node_personal_credits_data = tmdb_api_utils.get_movie_credits_for_person(init_node_id, highly_rated_movies_average_threshold)
+    #print(len(init_node_personal_credits_data))
+    for current_credits_data in init_node_personal_credits_data:
+        coactors_data=tmdb_api_utils.get_movie_cast(str(current_credits_data["id"]), number_of_coactors)
+        for actor in coactors_data:
+            actor_id=actor["id"]
+            graph.add_node(actor_id, actor["character"])
+            graph.add_edge(init_node_id, actor_id)
+    
+    
+    
     #graph.write_edges_file()
     #graph.write_nodes_file()
 
