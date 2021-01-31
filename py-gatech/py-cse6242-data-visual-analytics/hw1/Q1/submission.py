@@ -194,12 +194,15 @@ class  TMDBAPIUtils:
         #print("Movie Credits Response Status is: {} - {}".format(response.status, response.reason))
         connection.close()
         
-        selected_cast_members = [cast for cast in movie_credits_data["cast"]]
-        if limit != None:
-            selected_cast_members = [cast for cast in selected_cast_members if cast["order"] < limit]
-        if exclude_ids != None and len(exclude_ids) > 0:
-            selected_cast_members = [cast for cast in selected_cast_members if cast["id"] not in exclude_ids]
-        return [{"id": cast["id"], "character": cast["character"].replace(",", ""), "credit_id": cast["credit_id"]} for cast in selected_cast_members]
+        if movie_credits_data["cast"] != None:
+            selected_cast_members = [cast for cast in movie_credits_data["cast"]]
+            if limit != None:
+                selected_cast_members = [cast for cast in selected_cast_members if cast["order"] < limit]
+            if exclude_ids != None and len(exclude_ids) > 0:
+                selected_cast_members = [cast for cast in selected_cast_members if cast["id"] not in exclude_ids]
+            return [{"id": str(cast["id"]), "character": cast["character"].replace(",", "") if cast["character"] != None else None, "credit_id": cast["credit_id"]} for cast in selected_cast_members]
+        else:
+            return []
         
     def get_movie_credits_for_person(self, person_id:str, vote_avg_threshold:float=None)->list:
         """
@@ -227,7 +230,7 @@ class  TMDBAPIUtils:
         person_credits_data = [cast for cast in person_credits_data["cast"]]
         if vote_avg_threshold != None:
             person_credits_data = [cast for cast in person_credits_data if cast["vote_average"] >= vote_avg_threshold]
-        return [{"id": cast["id"], "title": cast["title"], "vote_avg": cast["vote_average"]} for cast in person_credits_data]
+        return [{"id": str(cast["id"]), "title": cast["title"], "vote_avg": cast["vote_average"]} for cast in person_credits_data]
     
 #############################################################################################################################
 #
@@ -341,6 +344,40 @@ def return_argo_lite_snapshot()->str:
     """
     return NotImplemented
 
+def create_coactor_network(nodes_data:dict=None, edges_data:dict=None, all_nodes_data:dict=None, all_edges_data:dict=None, counter:int=0):
+    if nodes_data is None or len(nodes_data) == 0:
+       return all_edges_data, all_edges_data
+    
+    #print("3->", nodes_data, "\n4->", edges_data)
+    counter+=1
+    print("Run #: ", counter, "\tNodes: ", len(nodes_data), "-> Edges: ", len(edges_data))
+    local_nodes={}
+    local_edges={}
+    
+    for actor_id in nodes_data.keys():
+        actor_credits=tmdb_api_utils.get_movie_credits_for_person(actor_id, highly_rated_movies_average_threshold)
+        for actor_credit in actor_credits:
+            movie_id=actor_credit["id"]
+            coactors_data=tmdb_api_utils.get_movie_cast(movie_id, number_of_coactors, all_nodes_data.keys())
+            for coactor in coactors_data:
+                coactor_id = coactor["id"]
+                coactor_movie_character_name=coactor["character"]
+
+                if coactor_id not in all_nodes_data:
+                    # Adding Node to the Graph
+                    graph.add_node(coactor_id, coactor_movie_character_name)
+                    local_nodes[coactor_id] =  (coactor_id, coactor_movie_character_name)
+
+                if all_edges_data.get(actor_id) != coactor_id:
+                    # Adding an edge to the actor
+                    graph.add_edge(actor_id, coactor_id)
+                    local_edges[actor_id]=coactor_id
+    
+    #print(len(local_nodes), " -> ", len(local_edges))
+    all_nodes_data.update(local_nodes)
+    all_edges_data.update(local_edges)
+    return create_coactor_network(local_nodes, local_edges, all_nodes_data, all_edges_data, counter)
+
 
 
 # You should modify __main__ as you see fit to build/test your graph using  the TMDBAPIUtils & Graph classes.
@@ -356,8 +393,8 @@ if __name__ == "__main__":
     init_node_id="2975"
     init_node_actor_name="Laurence Fishburne"
     number_of_coactors = 3
-    all_graph_nodes={}
-    all_graph_edges={}
+    base_graph_nodes={}
+    base_graph_edges={}
     
     graph = Graph()
     graph.add_node(id=init_node_id, name=init_node_actor_name)
@@ -370,9 +407,9 @@ if __name__ == "__main__":
     init_node_personal_credits_data = tmdb_api_utils.get_movie_credits_for_person(init_node_id, highly_rated_movies_average_threshold)
     #print(len(init_node_personal_credits_data))
     for current_credits_data in init_node_personal_credits_data:
-        coactors_data=tmdb_api_utils.get_movie_cast(str(current_credits_data["id"]), number_of_coactors)
+        coactors_data=tmdb_api_utils.get_movie_cast(current_credits_data["id"], number_of_coactors)
         for actor in coactors_data:
-            actor_id=str(actor["id"])
+            actor_id=actor["id"]
             actor_movie_character_name=actor["character"]
             # Adding Node to the Graph
             graph.add_node(actor_id, actor_movie_character_name)
@@ -382,31 +419,16 @@ if __name__ == "__main__":
 
             # Maintaining Newly added nodes registry
             new_node=(actor_id, actor_movie_character_name)
-            all_graph_nodes[actor_id]=new_node
-            all_graph_edges[init_node_id]=actor_id
+            base_graph_nodes[actor_id]=new_node
+            base_graph_edges[init_node_id]=actor_id
     
-    for actor_id in list(all_graph_nodes.keys()):
-        actor_credits=tmdb_api_utils.get_movie_credits_for_person(actor_id, highly_rated_movies_average_threshold)
-        for actor_credit in actor_credits:
-            movie_id=str(actor_credit["id"])
-            coactors_data=tmdb_api_utils.get_movie_cast(movie_id, number_of_coactors)
-            for coactor in coactors_data:
-                coactor_id = str(coactor["id"])
-                coactor_movie_character_name=coactor["character"]
-
-                if coactor_id not in all_graph_nodes:
-                    # Adding Node to the Graph
-                    graph.add_node(coactor_id, coactor_movie_character_name)
-                    all_graph_nodes[coactor_id] =  (coactor_id, coactor_movie_character_name)
-
-                if all_graph_edges.get(actor_id) != coactor_id:
-                    # Adding an edge to the actor
-                    graph.add_edge(actor_id, coactor_id)
-                    all_graph_edges[actor_id]=coactor_id
+    #print("1->", base_graph_nodes, "\n2->", base_graph_edges)
+    create_coactor_network(base_graph_nodes, base_graph_edges, base_graph_nodes, base_graph_edges)
+    print("Completed preparing graph. Now writing CSV files.")
 
     graph.write_edges_file()
     graph.write_nodes_file()
 
     # If you have already built & written out your graph, you could read in your nodes & edges files
     # to perform testing on your graph.
-    graph = Graph(with_edges_file="edges.csv", with_nodes_file="nodes.csv")
+    #graph = Graph(with_edges_file="edges.csv", with_nodes_file="nodes.csv")
