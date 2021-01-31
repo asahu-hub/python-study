@@ -373,12 +373,19 @@ if __name__ == "__main__":
         for actor in coactors_data:
             actor_id=actor["id"]
             actor_movie_character_name=actor["character"]
+            # Adding Node to the Graph
             graph.add_node(actor_id, actor_movie_character_name)
+
+            #Adding an edge to the actor
             graph.add_edge(init_node_id, actor_id)
+
+            # Maintaining Newly added nodes registry
             new_node=(actor_id, actor_movie_character_name)
             all_graph_nodes[actor_id]=new_node
     
-    #for node in all_graph_nodes:
+    for actor in all_graph_nodes:
+        #actor_credits = tmdb_api_utils.get_movie_credits_for_person(actor.getKey(), highly_rated_movies_average_threshold)
+
         
         
     #graph.write_edges_file()
