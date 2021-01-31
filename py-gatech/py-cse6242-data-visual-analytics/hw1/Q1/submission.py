@@ -357,6 +357,7 @@ if __name__ == "__main__":
     init_node_actor_name="Laurence Fishburne"
     number_of_coactors = 3
     all_graph_nodes={}
+    all_graph_edges={}
     
     graph = Graph()
     graph.add_node(id=init_node_id, name=init_node_actor_name)
@@ -371,7 +372,7 @@ if __name__ == "__main__":
     for current_credits_data in init_node_personal_credits_data:
         coactors_data=tmdb_api_utils.get_movie_cast(str(current_credits_data["id"]), number_of_coactors)
         for actor in coactors_data:
-            actor_id=actor["id"]
+            actor_id=str(actor["id"])
             actor_movie_character_name=actor["character"]
             # Adding Node to the Graph
             graph.add_node(actor_id, actor_movie_character_name)
@@ -382,15 +383,30 @@ if __name__ == "__main__":
             # Maintaining Newly added nodes registry
             new_node=(actor_id, actor_movie_character_name)
             all_graph_nodes[actor_id]=new_node
+            all_graph_edges[init_node_id]=actor_id
     
-    for actor in all_graph_nodes:
-        #actor_credits = tmdb_api_utils.get_movie_credits_for_person(actor.getKey(), highly_rated_movies_average_threshold)
+    for actor_id in list(all_graph_nodes.keys()):
+        actor_credits=tmdb_api_utils.get_movie_credits_for_person(actor_id, highly_rated_movies_average_threshold)
+        for actor_credit in actor_credits:
+            movie_id=str(actor_credit["id"])
+            coactors_data=tmdb_api_utils.get_movie_cast(movie_id, number_of_coactors)
+            for coactor in coactors_data:
+                coactor_id = str(coactor["id"])
+                coactor_movie_character_name=coactor["character"]
 
-        
-        
-    #graph.write_edges_file()
-    #graph.write_nodes_file()
+                if coactor_id not in all_graph_nodes:
+                    # Adding Node to the Graph
+                    graph.add_node(coactor_id, coactor_movie_character_name)
+                    all_graph_nodes[coactor_id] =  (coactor_id, coactor_movie_character_name)
+
+                if all_graph_edges.get(actor_id) != coactor_id:
+                    # Adding an edge to the actor
+                    graph.add_edge(actor_id, coactor_id)
+                    all_graph_edges[actor_id]=coactor_id
+
+    graph.write_edges_file()
+    graph.write_nodes_file()
 
     # If you have already built & written out your graph, you could read in your nodes & edges files
     # to perform testing on your graph.
-    # graph = Graph(with_edges_file="edges.csv", with_nodes_file="nodes.csv")
+    graph = Graph(with_edges_file="edges.csv", with_nodes_file="nodes.csv")
