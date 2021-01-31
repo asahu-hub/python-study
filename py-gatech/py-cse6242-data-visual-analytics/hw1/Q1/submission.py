@@ -194,13 +194,13 @@ class  TMDBAPIUtils:
         #print("Movie Credits Response Status is: {} - {}".format(response.status, response.reason))
         connection.close()
         
-        if movie_credits_data["cast"] != None:
+        if "cast" in movie_credits_data:
             selected_cast_members = [cast for cast in movie_credits_data["cast"]]
             if limit != None:
                 selected_cast_members = [cast for cast in selected_cast_members if cast["order"] < limit]
             if exclude_ids != None and len(exclude_ids) > 0:
                 selected_cast_members = [cast for cast in selected_cast_members if cast["id"] not in exclude_ids]
-            return [{"id": str(cast["id"]), "character": cast["character"].replace(",", "") if cast["character"] != None else None, "credit_id": cast["credit_id"]} for cast in selected_cast_members]
+            return [{"id": str(cast["id"]), "character": cast["character"].replace(",", "") if cast["character"] != None else "", "credit_id": cast["credit_id"]} for cast in selected_cast_members]
         else:
             return []
         
@@ -362,8 +362,7 @@ def create_coactor_network(nodes_data:dict=None, edges_data:dict=None, all_nodes
             for coactor in coactors_data:
                 coactor_id = coactor["id"]
                 coactor_movie_character_name=coactor["character"]
-
-                if coactor_id not in all_nodes_data:
+                if coactor_id not in all_nodes_data.keys():
                     # Adding Node to the Graph
                     graph.add_node(coactor_id, coactor_movie_character_name)
                     local_nodes[coactor_id] =  (coactor_id, coactor_movie_character_name)
